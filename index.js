@@ -9,10 +9,11 @@ async function decodeGrid(url) {
 
   const entries = lines.map(line => {
     const parts = line.split(/\s+/);
-    const char = parts[0];
-    const x = parseInt(parts[1], 10);
+    const x = parseInt(parts[0], 10);
+    const char = parts[1];
     const y = parseInt(parts[2], 10);
-    return { char, x, y };
+
+    return { x, char, y };
   });
 
   const maxX = Math.max(...entries.map(e => e.x));
