@@ -24,3 +24,12 @@ that contains a list of Unicode characters and their positions in a 2D grid.
   | **x**| **char** | **y** |
   |:---:|:---:|:---:|
   | 87 | ░ | 0 |
+
+
+## Specifications
+
+Your code must be written in Python (preferred), JavaScript, TypeScript, Java, Kotlin, C#, C++, Go, Rust, Swift or Ruby.
+You may use external libraries.
+You may write helper functions, but there should be one function that:
+1. Takes in one argument, which is a string containing the URL for the Google Doc with the input data, AND
+2. When called, prints the grid of characters specified by the input data, displaying a graphic of correctly oriented uppercase letters.
