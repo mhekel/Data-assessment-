@@ -1,35 +1,22 @@
-async function decodeGrid(url) {
-  const response = await fetch(url);
-  const text = await response.text();
+import fs from "fs";
 
-  const lines = text
-    .split("\n")
-    .map(line => line.trim())
-    .filter(line => line.length > 0);
+// Read the input file
+const data = fs.readFileSync("input.txt", "utf8").trim().split("\n");
 
-  const entries = lines.map(line => {
-    const parts = line.split(/\s+/);
-    const x = parseInt(parts[0], 10);
-    const char = parts[1];
-    const y = parseInt(parts[2], 10);
+// Parse rows into objects
+const points = data.map(line => {
+  const parts = line.trim().split(/\s+/);
 
-    return { x, char, y };
-  });
+  const x = parseInt(parts[0], 10);   // FIRST column
+  const char = parts[1];              // SECOND column
+  const y = parseInt(parts[2], 10);   // THIRD column
 
-  const maxX = Math.max(...entries.map(e => e.x));
-  const maxY = Math.max(...entries.map(e => e.y));
+  return { x, y, char };
+});
 
-  const grid = Array.from({ length: maxY + 1 }, () =>
-    Array.from({ length: maxX + 1 }, () => " ")
-  );
+// Determine grid size
+const maxX = Math.max(...points.map(p => p.x));
+const maxY = Math.max(...points.map(p => p.y));
 
-  for (const { char, x, y } of entries) {
-    grid[y][x] = char;
-  }
-
-  for (const row of grid) {
-    console.log(row.join(""));
-  }
-}
-
-decodeGrid("https://docs.google.com/document/d/e/2PACX-1vSvM5gDlNvt7npYHhp_XfsJvuntUhq184By5xO_pA4b_gCWeXb6dM6ZxwN8rE6S4ghUsCj2VKR21oEP/pub");
+// Create empty grid
+const grid = Array.from
