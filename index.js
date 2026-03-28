@@ -1,40 +1,49 @@
-async function decodeGrid(url) {
+import fetch from "node-fetch";
+import cheerio from "cheerio";
+
+export async function decodeGrid(url) {
   const response = await fetch(url);
-  const text = await response.text();
+  const html = await response.text();
+  const $ = cheerio.load(html);
 
-  const lines = text
-    .split("\n")
-    .map(line => line.trim())
-    .filter(line => line.length > 0);
+  const points = [];
 
-  const entries = lines.map(line => {
-    const parts = line.split(/\s+/);
+  $("table tr").each((_, row) => {
+    const cells = $(row).find("td");
+    if (cells.length >= 3) {
+      const x = parseInt($(cells[0]).text().trim(), 10);
+      const ch = $(cells[1]).text().trim();
+      const y = parseInt($(cells[2]).text().trim(), 10);
 
-    // Correct order based on the table:
-    // x-coordinate | Character | y-coordinate
-    const x = parseInt(parts[0], 10);
-    const char = parts[1];
-    const y = parseInt(parts[2], 10);
-
-    return { x, char, y };
+      if (!isNaN(x) && !isNaN(y)) {
+        points.push({ x, y, ch });
+      }
+    }
   });
 
-  const maxX = Math.max(...entries.map(e => e.x));
-  const maxY = Math.max(...entries.map(e => e.y));
+  // Compute bounds
+  const minX = Math.min(...points.map(p => p.x));
+  const maxX = Math.max(...points.map(p => p.x));
+  const minY = Math.min(...points.map(p => p.y));
+  const maxY = Math.max(...points.map(p => p.y));
 
-  const grid = Array.from({ length: maxY + 1 }, () =>
-    Array.from({ length: maxX + 1 }, () => " ")
+  // Build empty grid
+  const width = maxX - minX + 1;
+  const height = maxY - minY + 1;
+
+  const grid = Array.from({ length: height }, () =>
+    Array.from({ length: width }, () => " ")
   );
 
-  for (const { x, char, y } of entries) {
-    grid[y][x] = char;
+  // Fill grid
+  for (const { x, y, ch } of points) {
+    const nx = x - minX;
+    const ny = y - minY;
+    grid[ny][nx] = ch;
   }
 
-  for (const row of grid) {
-    console.log(row.join(""));
+  // Print from top (maxY) to bottom (minY)
+  for (let row = height - 1; row >= 0; row--) {
+    console.log(grid[row].join(""));
   }
 }
-
-decodeGrid(
-  "https://docs.google.com/document/d/e/2PACX-1vSvM5gDlNvt7npYHhp_XfsJvuntUhq184By5xO_pA4b_gCWeXb6dM6ZxwN8rE6S4ghUsCj2VKR21oEP/pub"
-);
