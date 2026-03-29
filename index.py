@@ -1,7 +1,19 @@
+# Decode a Secret Message passed through a string
+# Python
+# Marie Hekel — 03/26/2026
+# GitHub: @mhekel
 
+"""
+This script fetches a published Google Doc containing a table of (x, char, y)
+coordinates, builds a normalized 2D grid, and prints the decoded ASCII message.
+"""
+
+
+# install packages
 import requests
 from bs4 import BeautifulSoup
 
+# One Arguement
 def decode_grid(url):
     # Fetch the published Google Doc HTML
     response = requests.get(url)
@@ -55,5 +67,5 @@ def decode_grid(url):
         print("".join(row))
 
 
-# Example usage:
+# Run python index.py 
 decode_grid("https://docs.google.com/document/d/e/2PACX-1vSvM5gDlNvt7npYHhp_XfsJvuntUhq184By5xO_pA4b_gCWeXb6dM6ZxwN8rE6S4ghUsCj2VKR21oEP/pub")
